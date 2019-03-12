@@ -78,7 +78,7 @@ sudo cp /tmp/inout.service /lib/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl start inout.service
 sudo systemctl enable inout.service
-echo 'Done.'
+echo 'Done'
 
 echo
 echo 'Manually run: ./inout.py --noauth_local_webserver'
