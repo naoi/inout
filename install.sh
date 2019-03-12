@@ -42,7 +42,7 @@ echo
 sudo apt -y install python-bluez python-pip; sudo pip install --upgrade oauth2client google-api-python-client
 
 echo
-echo 'Setting up inout.service... '
+echo_count "Setting up 'inout.service'... "
 cd scripts
 if [ ! -e /usr/bin/inout.py ]; then
   sudo ln -s inout.py /usr/bin/
