@@ -18,19 +18,19 @@ export CLIENT_SECRET=
 echo
 echo_count 'Making .credentials directory... '
 if [ ! -e ~/.credentials/ ]; then
-  mkdir ~/.credentials/
+  mkdir -p /.credentials/
 fi
 echo 'Done'
 
 echo
 echo_count 'Making /root/credentials directory... '
 if [ ! -e /root/.credentials/ ]; then
-  sudo mkdir /root/.credentials/
+  sudo mkdir -p /root/.credentials/
 fi
 echo 'Done'
 
 echo
-echo 'Update libraries to the latest ones...'
+echo_count 'Update libraries to the latest ones...'
 echo
 sudo apt -y update; sudo apt -y upgrade; sudo apt -y dist-upgrade; sudo apt -y autoremove; sudo apt -y autoclean
 sudo apt -y install python-bluez python-pip; sudo pip install --upgrade oauth2client google-api-python-client
