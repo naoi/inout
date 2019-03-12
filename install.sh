@@ -32,7 +32,13 @@ echo 'Done'
 echo
 echo_count 'Update libraries to the latest ones...'
 echo
+echo
 sudo apt -y update; sudo apt -y upgrade; sudo apt -y dist-upgrade; sudo apt -y autoremove; sudo apt -y autoclean
+
+echo
+echo_count 'Installing Python-related libraries...'
+echo
+echo
 sudo apt -y install python-bluez python-pip; sudo pip install --upgrade oauth2client google-api-python-client
 
 echo
@@ -66,14 +72,12 @@ WantedBy=multi-user.target
 INOUT_SERVICE
 echo 'Done'
 
-echo_count "Setting up 'inout.service'..."
 echo
+echo_count "Setting up 'inout.service'... "
 sudo cp /tmp/inout.service /lib/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl start inout.service
 sudo systemctl enable inout.service
-
-echo
 echo 'Done.'
 
 echo
