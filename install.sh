@@ -85,5 +85,5 @@ echo 'Manually run: ./inout.py --noauth_local_webserver'
 # ./inout.py --noauth_local_webserver
 
 echo
-echo "Done: '$(basename $0)'"
+echo "Done: 'inout.service' ('$(basename $0)')"
 echo
