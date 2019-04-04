@@ -51,7 +51,7 @@ class InOut(object):
   # at ~/.credentials/sheets.googleapis.com-python-quickstart.json
   # SCOPES = 'https://www.googleapis.com/auth/spreadsheets.readonly'
   SCOPES = 'https://www.googleapis.com/auth/spreadsheets'
-  CLIENT_SECRET_FILE = 'client_secret.json'
+  CLIENT_SECRETS_FILE = 'client_secrets.json'
   APPLICATION_NAME = 'Google Sheets API Python Inout Client'
 
   def __init__(self):
@@ -94,7 +94,7 @@ class InOut(object):
     store = Storage(credential_path)
     credentials = store.get()
     if not credentials or credentials.invalid:
-      flow = client.flow_from_clientsecrets(self.CLIENT_SECRET_FILE, self.SCOPES)
+      flow = client.flow_from_clientsecrets(self.CLIENT_SECRETS_FILE, self.SCOPES)
       flow.user_agent = self.APPLICATION_NAME
       if self.FLAGS:
         credentials = tools.run_flow(flow, store, self.FLAGS)
