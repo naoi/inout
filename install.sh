@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Updated by yas 2019/04/04.
 # Updated by yas 2019/03/11.
 # Created by yas 2019/03/01.
 
@@ -11,9 +12,9 @@ function echo_count () {
   echo -n "($(( COUNT++ ))/${TOTAL}) $1"
 }
 
-export CLIENT_ID=
-export PROJECT_ID=
-export CLIENT_SECRET=
+export GAPPS_CLIENT_ID=
+export GAPPS_PROJECT_ID=
+export GAPPS_CLIENT_SECRET=
 
 echo
 echo_count 'Making .credentials directory... '
@@ -50,10 +51,10 @@ fi
 echo 'Done'
 
 echo
-echo_count 'Creating client_secret.json... '
-sudo cat << CLIENT_SECRET > client_secrets.json
-{"installed":{"client_id":"${CLIENT_ID}","project_id":"${PROJECT_ID}","auth_uri":"https://accounts.google.com/o/oauth2/auth","token_uri":"https://accounts.google.com/o/oauth2/token","auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs","client_secret":"${CLIENT_SECRET}","redirect_uris":["urn:ietf:wg:oauth:2.0:oob","http://localhost"]}}
-CLIENT_SECRET
+echo_count 'Creating client_secrets.json... '
+sudo cat << CLIENT_SECRETS > client_secrets.json
+{"installed":{"client_id":"${GAPPS_CLIENT_ID}","project_id":"${GAPPS_PROJECT_ID}","auth_uri":"https://accounts.google.com/o/oauth2/auth","token_uri":"https://accounts.google.com/o/oauth2/token","auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs","client_secret":"${GAPPS_CLIENT_SECRET}","redirect_uris":["urn:ietf:wg:oauth:2.0:oob","http://localhost"]}}
+CLIENT_SECRETS
 
 sudo cat << INOUT_SERVICE > /tmp/inout.service
 [Unit]
