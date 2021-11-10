@@ -28,7 +28,7 @@ import os
 import time
 import datetime
 import bluetooth
-import json
+import yaml
 
 from apiclient import discovery
 from oauth2client import client
@@ -55,7 +55,6 @@ class InOut(object):
     SERVICE = None
     FLAGS = False
     DEVICES = []
-    JSON_DIR = os.path.dirname(os.path.realpath(__file__))
 
     """
     If modifying these scopes, delete your previously saved credentials
@@ -79,13 +78,13 @@ class InOut(object):
             print('In-Out (__init__): No service found.')
             exit()
 
-        json_file = self.JSON_DIR + '/inout.json'
-        if not os.path.exists(json_file):
-            print('Not found: ' + json_file)
+        yaml_file = os.path.splitext(os.path.basename(__file__))[0] + '.yaml'
+        if not os.path.exists(yaml_file):
+            print('Not found: ' + yaml_file)
             exit()
 
-        with open(json_file, 'r') as f:
-            self.DEVICES = json.load(f)['DEVICES']
+        with open(yaml_file, 'r') as conf:
+            self.DEVICES = yaml.safe_load(conf)['DEVICES']
 
     def get_credentials(self):
         """Gets valid user credentials from storage.

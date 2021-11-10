@@ -1,11 +1,7 @@
-{
-  "DEVICES": [
-  {
-    "DEVICE_ID": "${DEVICE_ID_1}",
-    "SPREADSHEETS": {"${SHEET_ID_1}": "${SHEET_SOURCE_ID_1}"}
-  },
-  {
-    "DEVICE_ID": "${DEVICE_ID_2}",
-    "SPREADSHEETS": {"${SHEET_ID_2}": "${SHEET_SOURCE_ID_2}"}
-  }
-]}
+DEVICES:
+- DEVICE_ID: "${DEVICE_ID_1}"
+  SPREADSHEETS:
+    "${SHEET_ID_1}": "${SHEET_SOURCE_ID_1}"
+- DEVICE_ID: "${DEVICE_ID_2}"
+  SPREADSHEETS:
+    "${SHEET_ID_2}": "${SHEET_SOURCE_ID_2}"
