@@ -13,6 +13,7 @@ function echo_count () {
   echo -n "($(( COUNT++ ))/${TOTAL}) $1"
 }
 
+export BASE_DIR="$(pwd)"
 set -a; eval "$(cat ${BASE_DIR}/.env <(echo) <(declare -x))"; set +a; ./install.sh
 
 echo
