@@ -36,12 +36,12 @@ Google Spreadsheet.
    ]}
    ```
 
-3. Modify `install.sh`.  Enter your `CLIENT_ID`, `PROJECT_ID` and `CLIENT_SECRET` for Google Spreadsheet API. 
+3. Modify `.env` file.  Enter your `CLIENT_ID`, `PROJECT_ID` and `CLIENT_SECRET` for Google Spreadsheet API. 
 
    ```
-   export CLIENT_ID="<ENTER_YOUR_CLIENT_ID>"
-   export PROJECT_ID="<ENTER_PROJECT_ID>"
-   export CLIENT_SECRET="<ENTER_YOUR_CLIENT_SECRET>"
+   CLIENT_ID='<ENTER_YOUR_CLIENT_ID>'
+   PROJECT_ID='<ENTER_PROJECT_ID>'
+   CLIENT_SECRET='<ENTER_YOUR_CLIENT_SECRET>'
    ```
 
 4. Run `chmod +x install.sh; ./install.sh`
