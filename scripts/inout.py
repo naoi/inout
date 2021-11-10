@@ -83,8 +83,12 @@ class InOut(object):
             print('Not found: ' + yaml_file)
             exit()
 
-        with open(yaml_file, 'r') as conf:
-            self.DEVICES = yaml.safe_load(conf)['DEVICES']
+        try:
+            with open(yaml_file, 'r') as conf:
+                self.DEVICES = yaml.safe_load(conf)['DEVICES']
+
+        except:
+            print('Could not open: ' + yaml_file)
 
     def get_credentials(self):
         """Gets valid user credentials from storage.
