@@ -40,7 +40,7 @@ echo
 echo_count 'Installing Python-related libraries...'
 echo
 echo
-sudo apt -y install python-bluez python3-pip; sudo pip install --upgrade oauth2client google-api-python-client boto3
+sudo apt -y install python3-bluez python3-pip; sudo pip install --upgrade oauth2client google-api-python-client boto3
 
 echo
 echo_count "Setting up 'inout.service'... "
