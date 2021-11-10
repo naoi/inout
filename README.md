@@ -39,9 +39,9 @@ Google Spreadsheet.
 3. Modify `.env` file.  Enter your `CLIENT_ID`, `PROJECT_ID` and `CLIENT_SECRET` for Google Spreadsheet API. 
 
    ```
-   CLIENT_ID='<ENTER_YOUR_CLIENT_ID>'
-   PROJECT_ID='<ENTER_PROJECT_ID>'
-   CLIENT_SECRET='<ENTER_YOUR_CLIENT_SECRET>'
+   GAPPS_CLIENT_ID='<ENTER_YOUR_CLIENT_ID>'
+   GAPPS_PROJECT_ID='<ENTER_PROJECT_ID>'
+   GAPPS_CLIENT_SECRET='<ENTER_YOUR_CLIENT_SECRET>'
    ```
 
 4. Run `chmod +x install.sh; ./install.sh`
