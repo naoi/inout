@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Updated by yas 2021/11/09.
 # Updated by yas 2019/04/04.
 # Updated by yas 2019/03/11.
 # Created by yas 2019/03/01.
@@ -12,9 +13,7 @@ function echo_count () {
   echo -n "($(( COUNT++ ))/${TOTAL}) $1"
 }
 
-export GAPPS_CLIENT_ID=
-export GAPPS_PROJECT_ID=
-export GAPPS_CLIENT_SECRET=
+set -a; eval "$(cat ${BASE_DIR}/.env <(echo) <(declare -x))"; set +a; ./install.sh
 
 echo
 echo_count 'Making .credentials directory... '
@@ -40,7 +39,7 @@ echo
 echo_count 'Installing Python-related libraries...'
 echo
 echo
-sudo apt -y install python-bluez python-pip; sudo pip install --upgrade oauth2client google-api-python-client
+sudo apt -y install python-bluez python3-pip; sudo pip install --upgrade oauth2client google-api-python-client
 
 echo
 echo_count "Setting up 'inout.service'... "
