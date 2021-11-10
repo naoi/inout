@@ -14,7 +14,7 @@ function echo_count () {
 }
 
 export BASE_DIR="$(pwd)"
-set -a; eval "$(cat ${BASE_DIR}/.env <(echo) <(declare -x))"; set +a; ./install.sh
+set -a; eval "$(cat ${BASE_DIR}/.env <(echo) <(declare -x))"; set +a;
 
 echo
 echo_count 'Making .credentials directory... '
