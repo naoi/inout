@@ -82,8 +82,8 @@ sudo systemctl enable inout.service
 echo 'Done'
 
 echo
-echo 'Manually run: ./inout.py --noauth_local_webserver'
-# ./inout.py --noauth_local_webserver
+echo 'Manually run this command by root: sudo ./inout.py --noauth_local_webserver'
+# sudo ./inout.py --noauth_local_webserver
 
 echo
 echo "Done: 'inout.service' ('$(basename $0)')"
