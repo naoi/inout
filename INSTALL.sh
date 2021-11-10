@@ -44,18 +44,17 @@ echo
 sudo apt -y install python3-pip python3-bluez python3-yaml pyton3-boto3 python3-googleapi
 
 echo
-echo_count "Setting up 'inout.service'... "
-cd scripts
-if [ ! -e /usr/bin/inout.py ]; then
-  sudo ln -s "$(pwd)/inout.py" /usr/bin/
-fi
-echo 'Done'
-
-echo
 echo_count 'Creating client_secrets.json... '
 sudo cat << CLIENT_SECRETS > client_secrets.json
 {"installed":{"client_id":"${GAPPS_CLIENT_ID}","project_id":"${GAPPS_PROJECT_ID}","auth_uri":"https://accounts.google.com/o/oauth2/auth","token_uri":"https://accounts.google.com/o/oauth2/token","auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs","client_secret":"${GAPPS_CLIENT_SECRET}","redirect_uris":["urn:ietf:wg:oauth:2.0:oob","http://localhost"]}}
 CLIENT_SECRETS
+
+echo
+echo_count "Setting up 'inout.service' as a daemon... "
+cd scripts
+if [ ! -e /usr/bin/inout.py ]; then
+  sudo ln -s "$(pwd)/inout.py" /usr/bin/
+fi
 
 sudo cat << INOUT_SERVICE > /tmp/inout.service
 [Unit]
