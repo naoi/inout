@@ -47,7 +47,7 @@ echo
 echo_count "Setting up 'inout.service'... "
 cd scripts
 if [ ! -e /usr/bin/inout.py ]; then
-  sudo ln -s ${PWD}/inout.py /usr/bin/
+  sudo ln -s "$(pwd)/inout.py" /usr/bin/
 fi
 echo 'Done'
 
