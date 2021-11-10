@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+# updated by yas 2021/11/09
 # updated by yas 2019/03/01
 # updated by yas 2019/02/07
 # updated by yas 2019/02/03
@@ -34,9 +35,6 @@ from apiclient import discovery
 from oauth2client import client
 from oauth2client import tools
 from oauth2client.file import Storage
-
-reload(sys)
-sys.setdefaultencoding('utf8')
 
 class InOut(object):
 
