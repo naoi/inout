@@ -44,4 +44,4 @@ Google Spreadsheet.
    GAPPS_CLIENT_SECRET='<ENTER_YOUR_CLIENT_SECRET>'
    ```
 
-4. Run `chmod +x install.sh; ./install.sh`
+4. Run `chmod +x INSTALL.sh; ./INSTALL.sh`
