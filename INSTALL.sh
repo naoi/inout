@@ -41,7 +41,7 @@ echo
 echo_count 'Installing Python-related libraries...'
 echo
 echo
-sudo apt -y install python3-pip python3-bluez python3-yaml pyton3-boto3 python3-googleapi
+sudo apt -y install python3-pip python3-bluez python3-yaml python3-boto3 python3-googleapi
 
 echo
 echo_count 'Creating client_secrets.json... '
