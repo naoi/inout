@@ -78,7 +78,7 @@ class InOut(object):
             print('In-Out (__init__): No service found.')
             exit()
 
-        yaml_file = self.CONF_DIR + '/' . os.path.splitext(os.path.basename(__file__))[0] + '.yaml'
+        yaml_file = self.CONF_DIR + '/' + os.path.splitext(os.path.basename(__file__))[0] + '.yaml'
         if not os.path.exists(yaml_file):
             print('Not found: ' + yaml_file)
             exit()
