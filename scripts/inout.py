@@ -35,7 +35,6 @@ from oauth2client import client
 from oauth2client import tools
 from oauth2client.file import Storage
 
-
 def _get_first_working_day_of_month(date=None):
     """Return the first working date of the month"""
 
@@ -55,6 +54,7 @@ class InOut(object):
     SERVICE = None
     FLAGS = False
     DEVICES = []
+    CONF_DIR = os.path.dirname(os.path.realpath(__file__))
 
     """
     If modifying these scopes, delete your previously saved credentials
@@ -78,7 +78,7 @@ class InOut(object):
             print('In-Out (__init__): No service found.')
             exit()
 
-        yaml_file = os.path.splitext(os.path.basename(__file__))[0] + '.yaml'
+        yaml_file = self.CONF_DIR + '/' . os.path.splitext(os.path.basename(__file__))[0] + '.yaml'
         if not os.path.exists(yaml_file):
             print('Not found: ' + yaml_file)
             exit()
