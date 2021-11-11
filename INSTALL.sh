@@ -55,6 +55,7 @@ echo
 echo_count "Setting up 'inout.service' as a daemon... "
 cd scripts
 if [ ! -e /usr/bin/inout.py ]; then
+  sudo rm -fr /usr/bin/inout.py
   sudo ln -s "inout.py" /usr/bin/
 fi
 
