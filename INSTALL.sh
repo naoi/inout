@@ -41,7 +41,8 @@ echo
 echo_count 'Installing Python-related libraries...'
 echo
 echo
-sudo apt -y install python3-pip python3-bluez python3-yaml python3-boto3 python3-googleapi python3-google-auth-oauthlib dhcpd
+sudo apt -y install python3-pip python3-bluez python3-yaml python3-boto3 python3-googleapi python3-google-auth-oauthlib
+sudo service dhpcd start
 
 echo
 export CLIENT_SECRETS='client_secrets.json'
@@ -56,14 +57,14 @@ echo_count "Setting up 'inout.service' as a daemon... "
 cd scripts
 if [ ! -e /usr/bin/inout.py ]; then
   sudo rm -fr /usr/bin/inout.py
-  sudo ln -s "inout.py" /usr/bin/
+  sudo ln -s /home/pi/inout/scripts/inout.py /usr/bin/inout.py
 fi
 
 sudo cat << INOUT_SERVICE > /tmp/inout.service
 [Unit]
 Description=In-Out Checker
-After=systemd-timesyncd.service dhcpcd.service bluetooth.target hciuart.service
-Requires=systemd-timesyncd.service dhcpcd.service bluetooth.target hciuart.service
+After=systemd-timesyncd.service bluetooth.target hciuart.service
+Requires=systemd-timesyncd.service bluetooth.target hciuart.service
 
 [Service]
 Type=simple
