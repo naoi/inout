@@ -92,3 +92,11 @@ echo "Manually run this command by root: sudo $(pwd)/inout.py --noauth_local_web
 echo
 echo "Done: 'inout.service' ('$(basename $0)')"
 echo
+
+export MIN=$(( SECONDS / 60 ));
+export SEC=$(( SECONDS % 60 ));
+export ELAPSED="${MIN} min ${SEC} sec."
+
+echo
+echo "Done. ($ELAPSED)"
+echo
