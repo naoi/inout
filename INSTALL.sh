@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Updated by yas 2024/08/27.
 # Updated by yas 2021/11/10.
 # Updated by yas 2021/11/09.
 # Updated by yas 2019/04/04.
