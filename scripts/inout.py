@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+# updated by yas 2024/09/04
 # updated by yas 2021/11/09
 # updated by yas 2019/03/01
 # updated by yas 2019/02/07
@@ -240,14 +241,14 @@ class InOut(object):
     def _create_sheet(self, spreadsheet_id='', sheet_source_id=''):
 
         # Create a new spreadsheet
-        sheet_name = time.strftime('%Y-%m', time.localtime())
+        sheet_name = datetime.now().strftime('%Y-%m')  # Use datetime for sheet name
         try:
 
             body = {'requests': [{
                 'duplicateSheet': {
                     'newSheetName': sheet_name,
                     'insertSheetIndex': 0,
-                    'sourceSheetId': sheet_source_id,
+                    'sourceSheetId': int(sheet_source_id),  # Ensure sourceSheetId is an integer
                 }
             }]}
 
@@ -260,12 +261,12 @@ class InOut(object):
                 spreadsheetId=spreadsheet_id, range=range_name,
                 valueInputOption=u'USER_ENTERED', body=body).execute()
 
-            print('In-Out: Created new Spreadsheet: %s' % sheet_name)
+            print(f'In-Out: Created new Spreadsheet: {sheet_name}')
 
         except Exception as e:
 
-            print('In-Out: Error: _create_sheet: %s' % sheet_name)
-            print(e)
+            print(f'In-Out: Error: _create_sheet: {sheet_name}')
+            print(f'Exception details: {str(e)}')
 
 
 if __name__ == '__main__':
