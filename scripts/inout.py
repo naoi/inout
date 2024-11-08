@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+# updated by yas 2024/11/07
 # updated by yas 2024/09/04
 # updated by yas 2021/11/09
 # updated by yas 2019/03/01
@@ -241,7 +242,7 @@ class InOut(object):
     def _create_sheet(self, spreadsheet_id='', sheet_source_id=''):
 
         # Create a new spreadsheet
-        sheet_name = datetime.now().strftime('%Y-%m')  # Use datetime for sheet name
+        sheet_name = datetime.datetime.now().strftime('%Y-%m')  # Use datetime for sheet name
         try:
 
             body = {'requests': [{
