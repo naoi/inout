@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import io
 import os
 import re
 import tempfile
@@ -8,12 +9,15 @@ from pathlib import Path
 from typing import Any
 
 import yaml
+from ruamel.yaml import YAML
+from ruamel.yaml.error import YAMLError as RoundTripError
 
 from .errors import ConfigurationError
 
 ADDRESS_RE = re.compile(r"^[0-9A-F]{2}(?::[0-9A-F]{2}){5}$")
 SHEET_ID_RE = re.compile(r"^[A-Za-z0-9_-]{20,}$")
 UNEXPANDED_ENV_RE = re.compile(r"\$\{[^}]+\}")
+SEQUENCE_ITEM_RE = re.compile(r"^(\s*)-\s")
 
 
 @dataclass(frozen=True)
@@ -146,12 +150,36 @@ def load_config(path: str | Path) -> AppConfig:
     )
 
 
+def _sequence_offset(text: str, key: str) -> int:
+    """Return the indentation the existing items of a top-level sequence use."""
+    inside = False
+    for line in text.splitlines():
+        if not inside:
+            inside = line.rstrip() == f"{key}:"
+            continue
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+        match = SEQUENCE_ITEM_RE.match(line)
+        return len(match.group(1)) if match else 2
+    return 2
+
+
 def add_device(path: str | Path, device: DeviceConfig) -> None:
-    """Append a validated device using an atomic same-directory replacement."""
+    """Append a validated device using an atomic same-directory replacement.
+
+    The file is edited in round-trip mode so that comments, blank lines and the
+    indentation an operator wrote by hand survive a dashboard registration.
+    """
     config_path = Path(path).expanduser().resolve()
+    editor = YAML()
+    editor.preserve_quotes = True
     try:
-        raw = yaml.safe_load(config_path.read_text(encoding="utf-8"))
-    except (OSError, yaml.YAMLError) as exc:
+        text = config_path.read_text(encoding="utf-8")
+        offset = _sequence_offset(text, "devices")
+        editor.indent(mapping=2, sequence=offset + 2, offset=offset)
+        raw = editor.load(text)
+    except (OSError, RoundTripError) as exc:
         raise ConfigurationError(f"cannot update config file {config_path}: {exc}") from exc
     if not isinstance(raw, dict) or not isinstance(raw.get("devices"), list):
         raise ConfigurationError("configuration must have a devices list")
@@ -174,7 +202,9 @@ def add_device(path: str | Path, device: DeviceConfig) -> None:
     if device.template_sheet_id is not None:
         entry["template_sheet_id"] = device.template_sheet_id
     raw["devices"].append(entry)
-    rendered = yaml.safe_dump(raw, allow_unicode=True, sort_keys=False)
+    buffer = io.StringIO()
+    editor.dump(raw, buffer)
+    rendered = buffer.getvalue()
     mode = config_path.stat().st_mode & 0o777
     try:
         with tempfile.NamedTemporaryFile(
