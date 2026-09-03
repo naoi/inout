@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "inout-tracker"
+version = "1.0.0"
+description = "Bluetooth presence based attendance logging for Raspberry Pi and Google Sheets"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "inout contributors" }]
+keywords = ["raspberry-pi", "bluetooth", "attendance", "google-sheets"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: POSIX :: Linux",
+  "Programming Language :: Python :: 3",
+  "Topic :: Office/Business",
+]
+dependencies = [
+  "google-api-python-client>=2.140,<3",
+  "google-auth>=2.30,<3",
+  "PyYAML>=6.0,<7",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<9", "ruff>=0.6,<1"]
+
+[project.scripts]
+inout = "inout_tracker.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/naoi/inout"
+Issues = "https://github.com/naoi/inout/issues"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"

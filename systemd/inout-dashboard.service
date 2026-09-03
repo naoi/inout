@@ -1,0 +1,21 @@
+[Unit]
+Description=In-Out local configuration dashboard
+After=bluetooth.target
+Wants=bluetooth.target
+
+[Service]
+Type=simple
+User=inout
+Group=bluetooth
+EnvironmentFile=-/etc/inout/dashboard.env
+ExecStart=/opt/inout/venv/bin/inout --config /var/lib/inout/config.yaml dashboard
+Restart=on-failure
+RestartSec=10
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/inout
+
+[Install]
+WantedBy=multi-user.target
