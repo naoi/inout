@@ -8,7 +8,7 @@ import time
 from pathlib import Path
 
 from .bluetooth import BluetoothctlScanner
-from .config import load_config
+from .config import DEFAULT_CONFIG_PATH, load_config
 from .dashboard import serve_dashboard
 from .errors import InOutError
 from .service import AttendanceService
@@ -20,9 +20,7 @@ LOG = logging.getLogger(__name__)
 
 def parser() -> argparse.ArgumentParser:
     result = argparse.ArgumentParser(description="Bluetooth attendance logger")
-    result.add_argument(
-        "--config", default="/etc/inout/config.yaml", help="configuration YAML path"
-    )
+    result.add_argument("--config", default=DEFAULT_CONFIG_PATH, help="configuration YAML path")
     result.add_argument("--verbose", action="store_true")
     commands = result.add_subparsers(dest="command", required=True)
     run = commands.add_parser("run", help="scan and update Google Sheets")
