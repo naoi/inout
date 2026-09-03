@@ -1,103 +1,46 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-# Updated by yas 2024/08/27.
-# Updated by yas 2021/11/10.
-# Updated by yas 2021/11/09.
-# Updated by yas 2019/04/04.
-# Updated by yas 2019/03/11.
-# Created by yas 2019/03/01.
-
-export TOTAL=$(( $(grep 'echo_count' $0 | wc -l)-2 ))
-export COUNT=1
-
-function echo_count () {
-
-  echo -n "($(( COUNT++ ))/${TOTAL}) $1"
-}
-
-export BASE_DIR="$(pwd)"
-set -a; eval "$(cat ${BASE_DIR}/.env <(echo) <(declare -x))"; set +a;
-
-echo
-echo_count 'Making .credentials directory... '
-if [ ! -e ~/.credentials/ ]; then
-  mkdir -p ~/.credentials/
-fi
-echo 'Done'
-
-echo
-echo_count 'Making /root/credentials directory... '
-if [ ! -e /root/.credentials/ ]; then
-  sudo mkdir -p /root/.credentials/
-fi
-echo 'Done'
-
-echo
-echo_count 'Update libraries to the latest ones...'
-echo
-echo
-sudo apt -y update; sudo apt -y upgrade; sudo apt -y dist-upgrade; sudo apt -y autoremove; sudo apt -y autoclean
-
-echo
-echo_count 'Installing Python-related libraries...'
-echo
-echo
-sudo apt -y install python3-pip python3-bluez python3-yaml python3-boto3 python3-googleapi python3-google-auth-oauthlib
-sudo service dhpcd start
-
-echo
-export CLIENT_SECRETS='client_secrets.json'
-echo_count "Creating client_secrets.json '${CLIENT_SECRETS_JSON}'... "
-sudo cat << CLIENT_SECRETS > "${CLIENT_SECRETS}"
-{"installed":{"client_id":"${GAPPS_CLIENT_ID}","project_id":"${GAPPS_PROJECT_ID}","auth_uri":"https://accounts.google.com/o/oauth2/auth","token_uri":"https://accounts.google.com/o/oauth2/token","auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs","client_secret":"${GAPPS_CLIENT_SECRET}","redirect_uris":["urn:ietf:wg:oauth:2.0:oob","http://localhost"]}}
-CLIENT_SECRETS
-echo 'Done'
-
-echo
-echo_count "Setting up 'inout.service' as a daemon... "
-cd scripts
-if [ ! -e /usr/bin/inout.py ]; then
-  sudo rm -fr /usr/bin/inout.py
-  sudo ln -s /home/pi/inout/scripts/inout.py /usr/bin/inout.py
+if [[ "${EUID}" -ne 0 ]]; then
+  echo "Run this installer with sudo: sudo ./INSTALL.sh" >&2
+  exit 1
 fi
 
-sudo cat << INOUT_SERVICE > /tmp/inout.service
-[Unit]
-Description=In-Out Checker
-After=systemd-timesyncd.service bluetooth.target hciuart.service
-Requires=systemd-timesyncd.service bluetooth.target hciuart.service
+SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+INSTALL_DIR="/opt/inout"
+CONFIG_DIR="/etc/inout"
+STATE_DIR="/var/lib/inout"
 
-[Service]
-Type=simple
-ExecStart=/usr/bin/inout.py
-Restart=always
-RestartSec=3
+apt-get update
+apt-get install -y bluetooth bluez python3 python3-venv
 
-[Install]
-WantedBy=multi-user.target
-INOUT_SERVICE
-echo 'Done'
+if ! getent group inout >/dev/null 2>&1; then
+  groupadd --system inout
+fi
+if ! id inout >/dev/null 2>&1; then
+  useradd --system --gid inout --home-dir "${STATE_DIR}" --create-home --groups bluetooth inout
+else
+  usermod --append --groups bluetooth inout
+fi
 
-echo
-echo_count "Setting up 'inout.service'... "
-sudo cp /tmp/inout.service /lib/systemd/system/
-sudo systemctl daemon-reload
-sudo systemctl start inout.service
-sudo systemctl enable inout.service
-echo 'Done'
+install -d -m 0755 "${INSTALL_DIR}"
+install -d -m 0750 -o root -g inout "${CONFIG_DIR}"
+install -d -m 0750 -o inout -g inout "${STATE_DIR}"
+python3 -m venv "${INSTALL_DIR}/venv"
+"${INSTALL_DIR}/venv/bin/pip" install --upgrade pip
+"${INSTALL_DIR}/venv/bin/pip" install "${SOURCE_DIR}"
 
-echo
-echo "Manually run this command by root: sudo $(pwd)/inout.py --noauth_local_webserver"
-# sudo ./inout.py --noauth_local_webserver
+if [[ ! -e "${STATE_DIR}/config.yaml" ]]; then
+  install -m 0600 -o inout -g inout "${SOURCE_DIR}/config.example.yaml" "${STATE_DIR}/config.yaml"
+fi
 
-echo
-echo "Done: 'inout.service' ('$(basename $0)')"
-echo
+install -m 0644 "${SOURCE_DIR}/systemd/inout.service" /etc/systemd/system/inout.service
+install -m 0644 "${SOURCE_DIR}/systemd/inout-dashboard.service" /etc/systemd/system/inout-dashboard.service
+systemctl daemon-reload
 
-export MIN=$(( SECONDS / 60 ));
-export SEC=$(( SECONDS % 60 ));
-export ELAPSED="${MIN} min ${SEC} sec."
-
-echo
-echo "Done. ($ELAPSED)"
-echo
+echo "Installed. Next:"
+echo "  1. Edit /var/lib/inout/config.yaml"
+echo "  2. Put the service account JSON at /etc/inout/google-service-account.json"
+echo "  3. Run: sudo -u inout ${INSTALL_DIR}/venv/bin/inout --config ${STATE_DIR}/config.yaml check-config"
+echo "  4. Enable services when the check succeeds:"
+echo "     systemctl enable --now inout inout-dashboard"

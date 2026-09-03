@@ -1,47 +1,89 @@
-# inout
-In-out Checker: Bluetooth detection script for Raspberry PI
+# In-Out Tracker
 
-# Overview
-This script will detect the presence of Bluetooth devices by Raspberry PI.
+[日本語](README.ja.md)
 
-When a Bluetooth device is detected or out of the range of Raspberry PI, this script writes the date and time into
-Google Spreadsheet.
+In-Out Tracker is a Raspberry Pi attendance logger. It scans for configured Bluetooth devices and records the first and latest sightings of each day in Google Sheets. It also includes a small local dashboard for finding and registering devices.
 
-# Install
-1. Copy the following In-Out Checker Google Spreadsheet template to your Google Spreadsheet.
+## Important iPhone limitation
 
-   https://docs.google.com/spreadsheets/d/1Mk71lyJhDoBiPQiiNaIn-cQ-KnqVbd49oVlabT_O2FI
+iOS does not guarantee that an iPhone continuously advertises a stable Bluetooth address. A normal iPhone may only appear while discoverable, paired, connected, or advertising through a compatible beacon app. Test detection before relying on this for payroll or safety decisions. A dedicated BLE beacon is usually more reliable.
 
-2. Modify `scripts/inout.json`
+## Features
 
-   ```
-   ${DEVICE_ID_N}: Replace to your Bluetooth Device ID
-   ${SHEET_ID_N}: Your Google Spreadsheet ID
-   ${SHEET_SOURCE_ID_N}: The template sheet ID (from the above sheet named YYYY-MM)
-   ```
+- Python 3.9 or newer, BlueZ, and service-account based Google authentication
+- One Bluetooth scan per polling cycle, with an absence grace period
+- Automatic clean monthly sheet creation or optional in-workbook template duplication
+- Per-device error isolation, retry backoff, structured logs, and persistent presence state
+- Local responsive dashboard with token enforcement for non-localhost binding
+- systemd units, validation command, tests, and English/Japanese documentation
 
-   (`scripts/inout.json` example)
+## Quick start
 
-   ```
-   {
-     "DEVICES": [
-     {
-       "DEVICE_ID": '34:18:BF:5B:22:31',
-       "SPREADSHEETS": {"4gJuW03418G6KOymH4Z-9uGT-xNP6mbhINbuQ-XR1H22": "1567910069"}
-     },
-     {
-       "DEVICE_ID": '34:18:BF:5B:22:32',
-       "SPREADSHEETS": {"4gJuW03418G6KOymH4Z-9uGT-xNP6mbhINbuQ_XR1H22": "1567910069"}
-     }
-   ]}
-   ```
+Requirements: Raspberry Pi OS with Bluetooth, Python 3.9 or newer, a Google Cloud project, and a Google service account.
 
-3. Modify `.env` file.  Enter your `CLIENT_ID`, `PROJECT_ID` and `CLIENT_SECRET` for Google Spreadsheet API. 
+```bash
+git clone https://github.com/naoi/inout.git
+cd inout
+sudo ./INSTALL.sh
+sudoedit /var/lib/inout/config.yaml
+sudo -u inout /opt/inout/venv/bin/inout --config /var/lib/inout/config.yaml check-config
+sudo systemctl enable --now inout inout-dashboard
+```
 
-   ```
-   GAPPS_CLIENT_ID='<ENTER_YOUR_CLIENT_ID>'
-   GAPPS_PROJECT_ID='<ENTER_PROJECT_ID>'
-   GAPPS_CLIENT_SECRET='<ENTER_YOUR_CLIENT_SECRET>'
-   ```
+The installer does not start services until you finish the configuration and access check.
 
-4. Run `chmod +x INSTALL.sh; ./INSTALL.sh`
+Open the dashboard from the Pi itself at <http://127.0.0.1:8080>. For SSH access, forward it without exposing the port:
+
+```bash
+ssh -L 8080:127.0.0.1:8080 pi@raspberrypi.local
+```
+
+Then open <http://127.0.0.1:8080> on your computer.
+
+## Google Sheets setup
+
+1. Enable Google Sheets API in a Google Cloud project.
+2. Create a service account and download its JSON key.
+3. Create one spreadsheet per person, or choose another layout that keeps each configured device mapped to a spreadsheet.
+4. Share each spreadsheet with the service account email as Editor.
+5. Put the JSON key at `/etc/inout/google-service-account.json` with restrictive permissions.
+6. Copy [config.example.yaml](config.example.yaml) to `/var/lib/inout/config.yaml` and enter the Bluetooth address and spreadsheet ID.
+
+The application creates a clean `YYYY-MM` tab automatically. To keep an existing layout, set `template_sheet_id` to a tab ID in the same target spreadsheet. New users should omit this setting.
+
+The historical spreadsheet referenced by the original project is not used as a public template because it contains unrelated historical tabs and broken formula references. See [Google Sheets design](docs/google-sheets.md).
+
+## Commands
+
+```bash
+inout --config /var/lib/inout/config.yaml check-config
+inout --config /var/lib/inout/config.yaml scan
+inout --config /var/lib/inout/config.yaml run --once
+inout --config /var/lib/inout/config.yaml run
+inout --config /var/lib/inout/config.yaml dashboard
+```
+
+## Documentation
+
+- [Installation and configuration](docs/setup.md)
+- [Dashboard and device registration](docs/dashboard.md)
+- [Google Sheets layout](docs/google-sheets.md)
+- [Troubleshooting](docs/troubleshooting.md)
+- [Security policy](SECURITY.md)
+- [Contributing](CONTRIBUTING.md)
+
+## Development
+
+```bash
+python -m venv .venv
+. .venv/bin/activate
+python -m pip install -e '.[dev]'
+pytest
+ruff check .
+```
+
+Hardware and Google calls are isolated behind small interfaces, so unit tests run without Bluetooth hardware or Google credentials.
+
+## License
+
+MIT

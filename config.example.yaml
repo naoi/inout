@@ -1,0 +1,22 @@
+version: 1
+
+polling_interval_seconds: 20
+absence_grace_seconds: 120
+bluetooth_scan_seconds: 8
+state_file: /var/lib/inout/state.json
+
+google:
+  credentials_file: /etc/inout/google-service-account.json
+
+dashboard:
+  host: 127.0.0.1
+  port: 8080
+  token_env: INOUT_DASHBOARD_TOKEN
+
+devices:
+  - name: Alice's phone
+    address: AA:BB:CC:DD:EE:FF
+    spreadsheet_id: 1234567890abcdefghijklmnopqrstuvwxyz
+    # Optional: duplicate this tab when creating a month instead of using
+    # the clean built-in layout. The tab must be in the target spreadsheet.
+    # template_sheet_id: 901754805

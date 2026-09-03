@@ -1,0 +1,21 @@
+[Unit]
+Description=In-Out Bluetooth attendance logger
+After=network-online.target bluetooth.target
+Wants=network-online.target bluetooth.target
+
+[Service]
+Type=simple
+User=inout
+Group=bluetooth
+ExecStart=/opt/inout/venv/bin/inout --config /var/lib/inout/config.yaml run
+Restart=on-failure
+RestartSec=10
+StateDirectory=inout
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/inout
+
+[Install]
+WantedBy=multi-user.target
