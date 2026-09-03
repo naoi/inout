@@ -14,6 +14,8 @@ from ruamel.yaml.error import YAMLError as RoundTripError
 
 from .errors import ConfigurationError
 
+DEFAULT_CONFIG_PATH = "/var/lib/inout/config.yaml"
+
 ADDRESS_RE = re.compile(r"^[0-9A-F]{2}(?::[0-9A-F]{2}){5}$")
 SHEET_ID_RE = re.compile(r"^[A-Za-z0-9_-]{20,}$")
 UNEXPANDED_ENV_RE = re.compile(r"\$\{[^}]+\}")
