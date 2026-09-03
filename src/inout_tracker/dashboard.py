@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hmac
 import json
+import logging
 import os
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -11,6 +12,8 @@ from typing import Any
 from .bluetooth import BluetoothctlScanner
 from .config import DeviceConfig, add_device, load_config
 from .errors import InOutError
+
+LOG = logging.getLogger(__name__)
 
 MAX_BODY_BYTES = 64 * 1024
 
@@ -139,6 +142,15 @@ def handler_factory(
                 self._json(HTTPStatus.CREATED, {"registered": device.address})
             except (InOutError, ValueError, TypeError, json.JSONDecodeError) as exc:
                 self._json(HTTPStatus.BAD_REQUEST, {"error": str(exc)})
+
+        def handle_one_request(self) -> None:
+            try:
+                super().handle_one_request()
+            except (BrokenPipeError, ConnectionResetError):
+                LOG.debug(
+                    "client %s disconnected before the response was sent", self.client_address
+                )
+                self.close_connection = True
 
         def log_message(self, format: str, *args: object) -> None:
             return
