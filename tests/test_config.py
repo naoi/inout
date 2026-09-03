@@ -49,6 +49,20 @@ class ConfigTests(unittest.TestCase):
             with self.assertRaisesRegex(ConfigurationError, "token"):
                 load_config(config_file)
 
+    def test_add_device_keeps_comments_and_indentation(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            config_file = Path(directory) / "config.yaml"
+            write_config(config_file, "    # keep this note\n")
+            original = config_file.read_text(encoding="utf-8")
+            add_device(
+                config_file,
+                DeviceConfig("Bob", "11:22:33:44:55:66", "abcdefghijklmnopqrst", None),
+            )
+            updated = config_file.read_text(encoding="utf-8")
+            self.assertIn("# keep this note", updated)
+            self.assertTrue(updated.startswith(original.rstrip("\n") + "\n"))
+            self.assertIn("  - name: Bob\n", updated)
+
     def test_add_device_is_persisted(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             config_file = Path(directory) / "config.yaml"
